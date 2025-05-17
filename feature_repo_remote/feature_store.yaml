@@ -1,0 +1,17 @@
+project: bfi_loan_features
+registry:
+  registry_type: remote
+  path: localhost:6570
+
+provider: local
+
+online_store:
+  type: remote
+  path: http://localhost:6566
+
+offline_store:
+  type: remote
+  host: localhost
+  port: 8815
+
+entity_key_serialization_version: 3

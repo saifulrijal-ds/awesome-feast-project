@@ -1,0 +1,61 @@
+services:
+  # PostgreSQL for offline store and registry
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: feast
+      POSTGRES_USER: feast_user
+      POSTGRES_PASSWORD: feast_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U feast_user -d feast"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for online store
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # All-in-one Feast service
+  feast:
+    build:
+      context: .
+      dockerfile: Dockerfile.feast
+    volumes:
+      - ./feature_repo:/feature_repo
+    ports:
+      - "6566:6566"  # Python Feature Server
+      - "6570:6570"  # Registry Server
+      - "8815:8815"  # Offline Feature Server
+      - "8888:8888"  # Feast UI
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=feast
+      - POSTGRES_USER=feast_user
+      - POSTGRES_PASSWORD=feast_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+volumes:
+  postgres_data:
+  redis_data:

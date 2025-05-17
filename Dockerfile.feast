@@ -1,0 +1,41 @@
+FROM python:3.11-slim
+
+WORKDIR /feature_repo
+
+# Install PostgreSQL client, Tk libraries, supervisor and other dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    tk-dev \
+    python3-tk \
+    curl \
+    supervisor \
+    procps \
+    netcat-traditional \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Feast with all required dependencies in one command
+# Adding all necessary gRPC packages
+RUN pip install --no-cache-dir \
+    "feast[ge,postgres,redis]>=0.48.1" \
+    "protobuf==5.29.0" \
+    "grpcio" \
+    "grpcio-tools" \
+    "grpcio-reflection" \
+    "grpcio-health-checking"  # Added for grpc_health module
+
+# Create necessary directories
+RUN mkdir -p /feature_repo/data /var/log/supervisor
+
+# Copy supervisor configuration
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Create an init script to ensure the feature_repo is properly configured
+COPY init-feast.sh /init-feast.sh
+RUN chmod +x /init-feast.sh
+
+# Expose ports for all services
+EXPOSE 6566 6570 8815 8888
+
+# Entry point
+ENTRYPOINT ["/init-feast.sh"]

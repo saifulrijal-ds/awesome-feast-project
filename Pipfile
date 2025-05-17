@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+protobuf = "==5.29.0"
+pipenv = "*"
+feast = {extras = ["redis", "postgres", "ge"], version = "*"}
+jupyter = "*"
+pandas = "*"
+scipy = "*"
+psycopg2-binary = "*"
+lifelines = "*"
+scikit-survival = "*"
+shap = "*"
+grpcio = "*"
+grpcio-tools = "*"
+grpcio-reflection = "*"
+grpcio-health-checking = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
