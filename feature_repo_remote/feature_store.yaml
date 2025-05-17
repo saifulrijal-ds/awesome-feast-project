@@ -15,3 +15,5 @@ offline_store:
   port: 8815
 
 entity_key_serialization_version: 3
+auth:
+  type: no_auth
