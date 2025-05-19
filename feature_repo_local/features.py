@@ -135,36 +135,36 @@ combined_loan_source = PostgreSQLSource(
     timestamp_field="event_timestamp",
 )
 
-batch_source = PostgreSQLSource(
-    name="statical_loan_batch_source",
-    query="""
-    SELECT 
-        loan_id,
-        customer_id,
-        product_type,
-        loan_amount,
-        interest_rate,
-        loan_term,
-        collateral_value,
-        ltv_ratio,
-        origination_date,
-        credit_score,
-        dti_ratio,
-        time_to_event,
-        default_flag,
-        event_timestamp
-    FROM 
-        bfi_static_loan_data
-    """,
-    timestamp_field="event_timestamp",
-    created_timestamp_column='created'
-)
+# batch_source = PostgreSQLSource(
+#     name="statical_loan_batch_source",
+#     query="""
+#     SELECT 
+#         loan_id,
+#         customer_id,
+#         product_type,
+#         loan_amount,
+#         interest_rate,
+#         loan_term,
+#         collateral_value,
+#         ltv_ratio,
+#         origination_date,
+#         credit_score,
+#         dti_ratio,
+#         time_to_event,
+#         default_flag,
+#         event_timestamp
+#     FROM 
+#         bfi_static_loan_data
+#     """,
+#     timestamp_field="event_timestamp",
+#     created_timestamp_column='created'
+# )
 
-# Define Push Sources
-push_source = PushSource(
-    name="statical_loan_push_source",
-    batch_source=batch_source
-)
+# # Define Push Sources
+# push_source = PushSource(
+#     name="statical_loan_push_source",
+#     batch_source=batch_source
+# )
 
 
 # Define feature views
@@ -254,30 +254,30 @@ combined_loan_features = FeatureView(
     tags={"category": "combined_view", "owner": "data_science_team"},
 )
 
-push_loan_features = FeatureView(
-    name="push_loan_features",
-    entities=[loan_entity],
-    ttl=timedelta(days=3650),  # 10 years
-    schema=[
-        # Existing fields
-        Field(name="loan_amount", dtype=Float32),
-        Field(name="interest_rate", dtype=Float32),
-        Field(name="loan_term", dtype=Int64),
-        Field(name="product_type", dtype=String),
-        Field(name="collateral_value", dtype=Float32),
-        Field(name="ltv_ratio", dtype=Float32),
-        Field(name="credit_score", dtype=Int64),
-        Field(name="dti_ratio", dtype=Float32),
+# push_loan_features = FeatureView(
+#     name="push_loan_features",
+#     entities=[loan_entity],
+#     ttl=timedelta(days=3650),  # 10 years
+#     schema=[
+#         # Existing fields
+#         Field(name="loan_amount", dtype=Float32),
+#         Field(name="interest_rate", dtype=Float32),
+#         Field(name="loan_term", dtype=Int64),
+#         Field(name="product_type", dtype=String),
+#         Field(name="collateral_value", dtype=Float32),
+#         Field(name="ltv_ratio", dtype=Float32),
+#         Field(name="credit_score", dtype=Int64),
+#         Field(name="dti_ratio", dtype=Float32),
         
-        # New fields
-        Field(name="origination_date", dtype=UnixTimestamp),  # For date fields
-        Field(name="time_to_event", dtype=Int64),  # Assuming this is measured in days or months
-        Field(name="default_flag", dtype=Int64),  # Boolean for default status
-    ],
-    source=push_source,
-    online=True,
-    tags={"category": "push_loan_origination", "owner": "data_engineer_team"},
-)
+#         # New fields
+#         Field(name="origination_date", dtype=UnixTimestamp),  # For date fields
+#         Field(name="time_to_event", dtype=Int64),  # Assuming this is measured in days or months
+#         Field(name="default_flag", dtype=Int64),  # Boolean for default status
+#     ],
+#     source=push_source,
+#     online=True,
+#     tags={"category": "push_loan_origination", "owner": "data_engineer_team"},
+# )
 
 
 # Define feature services
