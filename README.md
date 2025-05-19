@@ -1,4 +1,4 @@
-# BFI Loan Default Prediction System
+# Loan Default Prediction System
 
 This repository contains a complete system for loan default prediction using a feature store (Feast) and survival analysis. It showcases how to build a model that predicts the probability of loan default over time for an Indonesian financial institution.
 
